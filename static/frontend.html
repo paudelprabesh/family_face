@@ -1,0 +1,47 @@
+<html>
+
+<body>
+<input type="file" id="file_select">
+<button id = "button1" >Submit </button></br></br>
+<img src="" id = "input_img" alt="Please select the input image to be predicted."></br>
+<p id="display_response" ></p>
+
+<script src= "https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+let base64img;
+
+$("#file_select").change(function(){
+let reader = new FileReader();
+
+reader.onload=function(e){
+	base64img = reader.result.replace(/data:image\/(png|jpg|jpeg);base64,/g,"");
+	$("#input_img").attr("src",reader.result)
+	//console.log(reader.result);
+	//base64img = reader.result.replace("data:image/jpg;base64,","");
+	
+
+}
+$("#input_img").attr('alt','');
+reader.readAsDataURL($("#file_select")[0].files[0]);
+
+});
+
+
+
+$("#button1").click(function(event){
+	img_dict = {img:base64img};
+	$("#display_response").text("LOADING.....")
+
+$.post("http://localhost:5000/predict",JSON.stringify(img_dict),function(data){
+
+$("#display_response").text('Image is predicted to be '+data.prediction+"'s image with confidence = "+data.confidence+'%');
+console.log(data.prediction);
+
+
+})
+});
+
+</script>
+</body>
+<html>
+
